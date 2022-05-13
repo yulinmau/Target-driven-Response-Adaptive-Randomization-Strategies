@@ -122,4 +122,6 @@ shinyUI(
                          )  # end tabsetPanel
               
     ), tags$head(tags$style(".R1{background-color: lightgray; font-size:150%}"))
-
+    
+  )  # fluidPage
+)  # end shinyUI
