@@ -6,7 +6,7 @@ library(expm)
 library(dplyr)
 
 # Calculate Sample Size
-CalculateSampleSize <- function(Pow, beta1, beta2, theta, r0, lam0, alpha_star, tau, Method){
+CalculateSampleSize <- function(Pow, beta1, beta2, theta, r0, lam0, alpha_star, tau){
   #################### Fisher Information Matrix ###################### 
   Fisher <- function(b1, b2, r0, lam0, theta, tau) {
     
@@ -95,21 +95,9 @@ CalculateSampleSize <- function(Pow, beta1, beta2, theta, r0, lam0, alpha_star, 
   
   #------------------- Calculate Sample Size -------------------
   #------------------- parameter -------------------
-  
-  # Pow <- 0.8
-  # 
-  # beta1 <- log(1/0.55)  # recurrent
-  # beta2 <- log(1.25)    # death
-  # theta <- 1  # for gamma frailty
-  
-  # r0 <- 0.2
-  # lam0 <- 0.2  
-  
   p <- 0.5
   n.point <- 100 # number of time point
-  # tau <- 1
-  
-  
+
   #------------ Main function ----------------------
   S0 <- Sa <- sigma_0 <- sigma_a <- Kr <- t1 <- t2 <- a1 <- a2 <- n_adj <- n_org <- NA
   
@@ -126,37 +114,14 @@ CalculateSampleSize <- function(Pow, beta1, beta2, theta, r0, lam0, alpha_star, 
   
   delta <- 1/(a1*a2-a12^2)*((beta1)^2*a2+(beta2)^2*a1-2*(beta1)*(beta2)*a12)
   
-  if(Method == "I"){
-    # Method I
-    #------------------ alpha_star=0.05
-    # alpha_star
-    # naive (df=1 formula) 
-    # (qnorm(1-Pow, lower.tail = F)*sqrt((sigma_a)[1])+ qnorm(0.025, lower.tail = F)* sqrt((sigma_a)[1]))^2/b_Ha^2
-    
-    # alpha_star <- 0.05
-    my.ncp <- function(ncp) {qchisq(Pow, df = 2, ncp = ncp , lower.tail = F) - 
-        qchisq(alpha_star, df = 2, lower.tail = F)}
-    non_cp <- uniroot(my.ncp, c(0.001,100))$root
-    n_adj <- non_cp/delta
-    # cat("Sample Size is", round(n_adj,1), "by method I")
-    return(round(n_adj,1))
-  }
+  #----------- alpha_star=0.05
+  my.ncp <- function(ncp){
+    qchisq(Pow, df = 2, ncp = ncp , lower.tail = F) - qchisq(alpha_star, df = 2, lower.tail = F)
+    }
+  non_cp <- uniroot(my.ncp, c(0.001,100))$root
+  n_adj <- non_cp/delta
   
-  if(Method == "II"){
-    # Method II
-    #------------------ new alpha
-    # new (df=1 formula)
-    # (qnorm(1-Pow, lower.tail = F)*sqrt((sigma_a)[1])+ qnorm(0.025, lower.tail = F)* sqrt((sigma_0)[1]))^2/b_Ha^2
-    
-    alpha_star <-  pchisq(sigma_0[1,1]/sigma_a[1,1]*qchisq(.05, df = 2, lower.tail = F), 
-                          df = 2, ncp = 0, lower.tail = F)
-    my.ncp <- function(ncp) {qchisq(Pow, df = 2, ncp = ncp , lower.tail = F) - 
-        qchisq(alpha_star, df = 2, lower.tail = F)}
-    non_cp <- uniroot(my.ncp, c(0.001,100))$root
-    n_adj <- non_cp/delta
-    # cat("Sample Size is", round(n_adj,1), "by method II")
-    round(n_adj,1)
-  }
+  return(round(n_adj,1))
 }
 
 E_VarF <- function(beta1, beta2, the, lamD, lamR, p) {
