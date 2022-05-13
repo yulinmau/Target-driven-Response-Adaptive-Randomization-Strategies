@@ -10,13 +10,6 @@
 library(shiny)
 
 shinyServer(function(input, output) {
-  ##-------------------- quti --------------------
-  # observe({
-  #   if (input$quit == 1|input$quit2 == 1)
-  #     stopApp()
-  # })
-  
-  
   ### Sample Size function ################
   SampleSizefunction = reactive({
     if (input$start == 0)
@@ -32,26 +25,19 @@ shinyServer(function(input, output) {
       alpha_star <- isolate(input$alpha_star) %>% as.numeric()
       
       SampleSize <- CalculateSampleSize(Pow = Pow,
-                                         beta1 = log(beta1),
-                                         beta2 = log(beta2),
-                                         theta = theta,
-                                         r0 = r0,
-                                         lam0 = lam0,
-                                         alpha_star = alpha_star,
-                                         tau = 100, Method = "I") %>% ceiling()
+                                        beta1 = log(beta1),
+                                        beta2 = log(beta2),
+                                        theta = theta,
+                                        r0 = r0,
+                                        lam0 = lam0,
+                                        alpha_star = alpha_star,
+                                        tau = 100) %>% ceiling()
       if(SampleSize %% 2 != 0){
         SampleSize <- SampleSize + 1
       }
       
       Result <- data.frame("Total sample size" = sprintf("%.0f", SampleSize))
       Result
-      
-      # if(Result$SampleSize %% 2 == 0){
-      #   Result$SampleSize
-      # }else{
-      #   Result$SampleSize <- Result$SampleSize + 1
-      #   Result$SampleSize
-      # }
     }
   })
   
@@ -65,7 +51,6 @@ shinyServer(function(input, output) {
                    value = 0, {
                      setProgress(1)
                      SampleSizefunction()
-                     # isolate(input$beta1) %>% as.numeric()
                      })
       }
     }, align = "c",
@@ -108,8 +93,6 @@ shinyServer(function(input, output) {
       AllocationI <- data.frame(Rule = "Rule 1",
                                 "Allocation probability" = paste0("<strong>", sprintf("%.3f", alloI), "</strong>"),
                                 check.names = FALSE)
-      
-      # paste0("<strong>", sprintf("%.3f", alloI), "</strong>")
       
       alloII <- optimize(Adap2, c(0.1, 0.9), maximum = F)[[1]]
       AllocationII <- data.frame(Rule = "Rule 2",
