@@ -68,7 +68,7 @@ shinyUI(
                                   ), # end tabPanel
                          
                          ######## Calculate Calculate Allocation Rule ############################################
-                          tabPanel(h3("Calculate Allocation Rule", style = "font-family:'times'"),
+                          tabPanel(h3("Calculate Allocation Probability", style = "font-family:'times'"),
                                    sidebarLayout(
                                      ### input controls
                                      sidebarPanel(
@@ -115,7 +115,7 @@ shinyUI(
                                    ), # end tabPanel
                          
                          ######## GitHub ############################################
-                         tabPanel(h3("Reference", style = "font-family:'times'"),
+                         tabPanel(h3("Source Code", style = "font-family:'times'"),
                                   h3("You can see the source code on github.", style = "font-family:'times'", class = "alert alert-dismissible alert-info"),
                                   wellPanel("https://github.com/yulinmau/Target-driven-Response-Adaptive-Randomization-Strategies.git", style = "font-family:'times'")
                                   )
